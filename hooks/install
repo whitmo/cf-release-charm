@@ -7,12 +7,6 @@
 
 set -e
 
-git clone https://github.com/cloudfoundry/cf-release.git /opt/cf-release
-
-bosh status
-
-mkdir -p /opt/deployments
-
 pip install boto ansible path.py
 ssh-keygen -N '' -f /home/ubuntu/.ssh/id_rsa
 
@@ -20,8 +14,7 @@ ssh-keygen -N '' -f /home/ubuntu/.ssh/id_rsa
 AWS_ACCESS_KEY=`config-get aws_access_key`
 AWS_SECRET_KEY=`config-get aws_secret_key`
 AWS_REGION=`config-get aws_region`
+MICROBOSH_AMI=`config-get microbosh_ami`
 
-echo "$AWS_REGION" "$AWS_ACCESS_KEY" "$AWS_SECRET_KEY"
+echo "$AWS_REGION" "$AWS_ACCESS_KEY" "$AWS_SECRET_KEY $MICROBOSH_AMI"
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -v playbook.yml
-bosh micro deployment /opt/deployments/microbosh.yml
-bosh micro deploy `config-get microbosh_ami`
