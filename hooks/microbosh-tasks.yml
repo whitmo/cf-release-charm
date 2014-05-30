@@ -46,7 +46,7 @@
     key_material: "{{ item }}"
   with_file: /home/ubuntu/.ssh/id_rsa.pub
 
-# add custom rules if ever has legs
+#@@ add custom rules
 - name: example ec2 group
   local_action:
     module: ec2_group

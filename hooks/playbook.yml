@@ -3,6 +3,39 @@
 - name: setup microbosh
   hosts: localhost
   user: ubuntu
-  gather_facts: false
+  vars:
+    depdir: /opt/deployments
   tasks:
-    include: microbosh-tasks.yml
+    - name: deploy dir
+      file: path=$depdir state=directory
+    - include: microbosh-tasks.yml
+    - name: set deployment
+      command: bosh micro deployment $depdir/microbosh.yml
+    - name: deploy micro bosh
+      command: bosh micro deploy {{lookup('env','MICROBOSH_AMI')}}
+
+- name: setup bosh
+  hosts: localhost
+  vars:
+    latest_release: https://s3.amazonaws.com/bosh-jenkins-artifacts/release/bosh-2579.tgz
+    stemcell: https://s3.amazonaws.com/bosh-jenkins-artifacts/bosh-stemcell/aws/bosh-stemcell-2579-aws-xen-ubuntu-trusty-go_agent.tgz
+    depdir: /opt/deployments
+
+  tasks:
+    - name: allocate a new elastic IP
+      ec2_eip:
+      register: bosh_eip
+    - name: upload release
+      command: bosh upload release {{latest_release}}
+    - name: create bosh dep dir
+      file: path=$depdir/bosh state=directory
+
+
+#@@ make release version configurable
+- name: prepare for cf deploy
+  hosts: localhost
+  tasks:
+    - name: cf-release source
+      git: repo=https://github.com/cloudfoundry/cf-release.git
+           dest=/opt/cf-release
+           version=v172
