@@ -22,6 +22,6 @@ AWS_SECRET_KEY=`config-get aws_secret_key`
 AWS_REGION=`config-get aws_region`
 
 echo "$AWS_REGION" "$AWS_ACCESS_KEY" "$AWS_SECRET_KEY"
-ansible-playbook playbook.yml
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -v playbook.yml
 bosh micro deployment /opt/deployments/microbosh.yml
 bosh micro deploy `config-get microbosh_ami`
