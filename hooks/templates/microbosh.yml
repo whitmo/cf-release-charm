@@ -1,0 +1,36 @@
+name: microbosh
+
+logging:
+  level: DEBUG
+
+network:
+  type: dynamic
+  vip: {{mb_eip.public_ip}}    #Change this to the MicroBOSH IP address
+
+resources:
+  persistent_disk: 20000
+  cloud_properties:
+    instance_type: m1.small
+    availability_zone: us-east-1a
+
+cloud:
+  plugin: aws
+  properties:
+    aws:
+      access_key_id: {{access_key}}   #Change this to your key
+      secret_access_key: {{secret_key}}    #Change this to your key
+      default_key_name: bosh
+      default_security_groups: ["bosh"]
+      ec2_private_key: ~/.ssh/bosh
+      ec2_endpoint: ec2.us-east-1.amazonaws.com
+      region: us-east-1
+
+apply_spec:
+  agent:
+    blobstore:
+      address: {{mb_eip.public_ip}}    #Change this to the MicroBOSH IP address
+    nats:
+      address: {{mb_eip.public_ip}}    #Change this to the MicroBOSH IP address
+  properties:
+    aws_registry:
+      address: {{mb_eip.public_ip}}    #Change this to the MicroBOSH IP address

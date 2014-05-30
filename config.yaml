@@ -1,0 +1,15 @@
+options:
+  aws_access_key:
+    type: string
+    description: "AWS Access Key"
+  aws_secret_key:
+    type: string
+    description: "AWS Secret Key"
+  aws_region:
+    type: string
+    default: "us-east-1"
+    description: "AWS Region"
+  microbosh_ami:
+    type: string
+    default: 'ami-8601eaee'
+    description: Microbosh ami

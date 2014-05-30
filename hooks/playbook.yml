@@ -1,0 +1,8 @@
+---
+
+- name: setup microbosh
+  hosts: localhost
+  user: ubuntu
+  gather_facts: false
+  tasks:
+    include: microbosh-tasks.yml

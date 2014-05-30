@@ -1,0 +1,59 @@
+# - name: key pair
+# - name: secgroup
+
+- name: Install the unix basics
+  sudo: true
+  tags: repos
+  apt: pkg=$item state=present update_cache=yes
+  with_items:
+    - emacs
+    - libxslt-dev
+    - libxml2-dev
+    - git
+    - ruby-all-dev
+    - build-essential
+    - ruby-mysql2
+    - mysql-client
+    - libpq-dev
+    - libsqlite3-dev
+    - python-pip
+
+- name: install gems w versions
+  sudo: true
+  gem: name=$item.name version=$item.version state=present
+  with_items:
+    - name: mini_portile
+      version: 0.5.0
+    - name: nokogiri
+      version: 1.5.11
+
+- name: install gems
+  sudo: true
+  gem: name=$item state=present
+  with_items:
+    - bundler
+    - bosh_cli
+    - bosh_cli_plugin_micro
+
+- name: allocate a new elastic IP
+  ec2_eip:
+  register: mb_eip
+
+- name: bosh keypair
+  local_action:
+    module: ec2_key
+    name: bosh
+    key_material: "{{ item }}"
+  with_file: /home/ubuntu/.ssh/id_rsa.pub
+
+# add custom rules if ever has legs
+- name: example ec2 group
+  local_action:
+    module: ec2_group
+    name: bosh
+    description: bosh security group
+    state: present
+
+- name: render microboosh manifest
+  sudo: true
+  template: src=microbosh.yml dest=/opt/deployments/microbosh.yml

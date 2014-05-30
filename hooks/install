@@ -1,0 +1,27 @@
+#!/bin/bash
+# Here do anything needed to install the seprvice
+# i.e. apt-get install -y foo  or  bzr branch http://myserver/mycode /srv/webroot
+# Make sure this hook exits cleanly and is idempotent, common problems here are
+# failing to account for a debconf question on a dependency, or trying to pull
+# from github without installing git first.
+
+set -e
+
+git clone https://github.com/cloudfoundry/cf-release.git /opt/cf-release
+
+bosh status
+
+mkdir -p /opt/deployments
+
+pip install boto ansible path.py
+ssh-keygen -N '' -f /home/ubuntu/.ssh/id_rsa
+
+# we could template this or pass it as extra vars
+AWS_ACCESS_KEY=`config-get aws_access_key`
+AWS_SECRET_KEY=`config-get aws_secret_key`
+AWS_REGION=`config-get aws_region`
+
+echo "$AWS_REGION" "$AWS_ACCESS_KEY" "$AWS_SECRET_KEY"
+ansible-playbook playbook.yml
+bosh micro deployment /opt/deployments/microbosh.yml
+bosh micro deploy `config-get microbosh_ami`

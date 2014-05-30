@@ -1,0 +1,17 @@
+name: cf-release
+summary: <Fill in summary here>
+maintainer: Whit Morriss <Whit.Morriss@JATO7>
+description: |
+  <Multi-line description here>
+categories:
+  - misc
+subordinate: false
+provides:
+  provides-relation:
+    interface: interface-name
+requires:
+  requires-relation:
+    interface: interface-name
+peers:
+  peer-relation:
+    interface: interface-name
